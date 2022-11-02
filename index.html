@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <!-- 01 Mapbox dependencies -->
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"></script>
+    <link
+      href="https://api.tiles.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <!-- 02 deck.gl dependencies -->
+    <script src="https://unpkg.com/deck.gl@^8.8.0/dist.min.js"></script>
+
+    <!-- jotform -->
+    <script src="https://js.jotform.com/JotForm.js"></script>
+
+    <!-- 03 connection to style.css -->
+    <link rel="stylesheet" href="./style.css" />
+    <title>test-jotform</title>
+  </head>
+
+  <body>
+    <!-- panel and hover tooltip that update by map interaction -->
+    <tooltip id="panel"></tooltip>
+    <!-- map container that map.js points towards -->
+    <div class="grid grid-column">
+      <div id="map"></div>
+      <div class="form-container grid grid-row-even">
+        <div class="form-iframe">
+          <script
+            type="text/javascript"
+            src="https://form.jotform.com/jsform/223046917466057"
+          ></script>
+        </div>
+        <a
+          class="qr-code"
+          href="https://form.jotform.com/223046917466057"
+          rel="no-follow"
+          ><img
+            src="https://www.jotform.com/uploads/McGlashan_Niko/form_files/223046917466057_1667351559_qrcode_muse.png"
+            width="100%"
+            alt="QR Code for Jotform form"
+        /></a>
+      </div>
+    </div>
+    <!-- 04 connection to map.js -->
+    <script src="./map.js"></script>
+  </body>
+</html>
