@@ -1,4 +1,4 @@
-// document.addEventListener("contextmenu", (event) => event.preventDefault()); //disable right click for map
+document.addEventListener("contextmenu", (event) => event.preventDefault()); //disable right click for map
 
 //JF.login(success, error) method takes two optional arguments
 //Both arguments should be function
