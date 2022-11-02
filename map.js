@@ -42,6 +42,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
       bearing: 0,
       pitch: 0,
     },
+    touchRotate: true,
     controller: true,
 
     layers: [
@@ -90,6 +91,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
     ],
     getTooltip: ({ object }) => {
       if (object) {
+        console.log(object);
         return (
           object && {
             html: `<img  src=${object.images[0]} />`,
