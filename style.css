@@ -84,9 +84,9 @@ img {
 }
 
 .grid-row-even {
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     justify-items: center;
-    gap: 3rem;
+    gap: 1rem;
 }
 
 .form-container {
