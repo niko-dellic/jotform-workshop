@@ -5,6 +5,10 @@ document.addEventListener("contextmenu", (event) => event.preventDefault()); //d
 //First argument will be called after successful login
 //Second argument will be called if authorization fails
 
+const ICON_MAPPING = {
+  marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
+};
+
 JF.initialize({ apiKey: "336b42c904dd34391b7e1c055286588b" });
 var apiKey = JF.getAPIKey();
 
@@ -51,6 +55,29 @@ JF.getFormSubmissions("223046917466057", function (response) {
 
   // get current location
   const successCallback = (position) => {
+    // add new point layer of current location to deck gl
+    const currentLocationLayer = new deck.IconLayer({
+      id: "current-location",
+      data: [
+        {
+          position: [position.coords.longitude, position.coords.latitude],
+        },
+      ],
+      getPosition: (d) => d.position,
+      //
+      iconAtlas:
+        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+      iconMapping: ICON_MAPPING,
+      getIcon: (d) => "marker",
+      sizeScale: 15,
+      getSize: (d) => 5,
+      getColor: [255, 255, 255],
+    });
+
+    deckgl.setProps({
+      layers: [...deckgl.props.layers, currentLocationLayer],
+    });
+
     return [position.coords.latitude, position.coords.longitude];
   };
 
@@ -58,12 +85,17 @@ JF.getFormSubmissions("223046917466057", function (response) {
     console.log(error);
   };
 
-  const currentLocation = navigator.geolocation.getCurrentPosition(
-    successCallback,
-    errorCallback
-  );
+  // create async function to await for current location and then return the promise as lat long coordinates then resolve the promise
+  function getCurrentLocation() {
+    const currentLocation = navigator.geolocation.getCurrentPosition(
+      successCallback,
+      errorCallback
+    );
+    return currentLocation;
+  }
 
-  console.log(currentLocation);
+  const newLocation = getCurrentLocation();
+  // console.log(newLocation);
 
   const deckgl = new deck.DeckGL({
     container: "map",
