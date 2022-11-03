@@ -58,7 +58,7 @@ img {
 }
 
 #image-gallery {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -69,16 +69,10 @@ img {
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    color: white;
     font-size: 2rem;
-    padding: 1rem;
-    font-weight: bold;
-    text-align: center;
-    padding: 1rem;
     cursor: pointer;
     flex-wrap: wrap;
-    overflow: scroll;
-
+    overflow: auto;
 }
 
 #image-gallery img {
@@ -131,7 +125,8 @@ img {
 
     body {
         height: 100%;
-        overflow: scroll;
+        overflow: auto;
+        overflow-x: hidden;
     }
 
     #map {
@@ -140,8 +135,12 @@ img {
         display: inline-block;
     }
 
+    .grid {
+        display: block;
+    }
+
     .grid-column {
-        grid-template-rows: auto auto;
+        grid-template-rows: auto;
         grid-template-columns: none;
         height: 100%;
     }
@@ -153,7 +152,6 @@ img {
         display: block;
     }
 
-
     .form-iframe {
         width: 100%;
         height: fit-content;
@@ -161,6 +159,29 @@ img {
         display: inline-block;
     }
 
+    #image-gallery {
+        width: 100vw;
+        height: 100vh;
+
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        cursor: pointer;
+        flex-wrap: wrap;
+        overflow: auto;
+
+    }
+
+    #image-gallery img {
+        margin: 0rem;
+    }
+
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
 
 
 }
