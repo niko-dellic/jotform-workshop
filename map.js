@@ -29,6 +29,11 @@ JF.getFormSubmissions("223046917466057", function (response) {
   }
 
   function getImageGallery(images, preview = false) {
+    if (!images && preview) {
+      // return you are here text
+      return `<p id="current-location-text">You are here</p>`;
+    }
+
     const imageGallery = document.createElement("div");
     imageGallery.id = !preview ? "image-gallery" : "";
 
@@ -72,6 +77,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
       sizeScale: 15,
       getSize: (d) => 5,
       getColor: [255, 255, 255],
+      pickable: true,
     });
 
     deckgl.setProps({

@@ -121,6 +121,11 @@ img {
     height: auto
 }
 
+#current-location-text {
+    color: white;
+    background-color: black;
+    padding: 1rem;
+}
 
 @media screen and (max-width: 1000px) {
 
