@@ -9,10 +9,6 @@ JF.initialize({ apiKey: "336b42c904dd34391b7e1c055286588b" });
 var apiKey = JF.getAPIKey();
 
 JF.getFormSubmissions("223046917466057", function (response) {
-  /**
-   successful response including submissions of form with given id
-   .
-   */
   const responses = [];
   for (var i = 0; i < response.length; i++) {
     const answerObject = {};
@@ -53,6 +49,22 @@ JF.getFormSubmissions("223046917466057", function (response) {
     }
   }
 
+  // get current location
+  const successCallback = (position) => {
+    return [position.coords.latitude, position.coords.longitude];
+  };
+
+  const errorCallback = (error) => {
+    console.log(error);
+  };
+
+  const currentLocation = navigator.geolocation.getCurrentPosition(
+    successCallback,
+    errorCallback
+  );
+
+  console.log(currentLocation);
+
   const deckgl = new deck.DeckGL({
     container: "map",
     // Set your Mapbox access token here
@@ -89,6 +101,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
         pickable: true,
         autoHighlight: true,
         highlightColor: [255, 255, 255, 255],
+
         onClick: (info) => {
           getImageGallery(info.object.images);
           flyToClick(info.object.coordinates);
@@ -97,7 +110,6 @@ JF.getFormSubmissions("223046917466057", function (response) {
     ],
     getTooltip: ({ object }) => {
       if (object) {
-        // console.log(object.images);
         return (
           object && {
             html: getImageGallery(object.images, (preview = true)),
