@@ -1,10 +1,5 @@
 document.addEventListener("contextmenu", (event) => event.preventDefault()); //disable right click for map
 
-//JF.login(success, error) method takes two optional arguments
-//Both arguments should be function
-//First argument will be called after successful login
-//Second argument will be called if authorization fails
-
 const ICON_MAPPING = {
   marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
 };
@@ -61,33 +56,27 @@ JF.getFormSubmissions("223046917466057", function (response) {
   // get current location
   const successCallback = (position) => {
     // add new point layer of current location to deck gl
-    const currentLocationLayer = new deck.IconLayer({
-      id: "current-location",
+    const layer = new deck.IconLayer({
+      id: "location",
       data: [
         {
           position: [position.coords.longitude, position.coords.latitude],
         },
       ],
-      getPosition: (d) => d.position,
-      //
+      pickable: true,
       iconAtlas:
-        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
+        "https://img.icons8.com/emoji/48/000000/round-pushpin-emoji.png",
       iconMapping: ICON_MAPPING,
       getIcon: (d) => "marker",
       sizeScale: 15,
-      getSize: (d) => 5,
+      getPosition: (d) => d.position,
+      getSize: 10,
       getColor: [255, 255, 255],
-      pickable: true,
-      parameters: {
-        depthTest: false,
-      },
     });
 
     deckgl.setProps({
-      layers: [...deckgl.props.layers, currentLocationLayer],
+      layers: [...deckgl.props.layers, layer],
     });
-
-    return [position.coords.latitude, position.coords.longitude];
   };
 
   const errorCallback = (error) => {
@@ -102,9 +91,46 @@ JF.getFormSubmissions("223046917466057", function (response) {
     );
     return currentLocation;
   }
+  if (navigator.geolocation) {
+    getCurrentLocation();
+  }
 
-  const newLocation = getCurrentLocation();
-  // console.log(newLocation);
+  const locationButton = document.createElement("button");
+  // create a button that will request the users location
+  locationButton.textContent = "Show my location";
+  locationButton.id = "location-button";
+  locationButton.addEventListener("click", () => {
+    // when clicked, get the users location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        // create a deck gl layer for the users location
+        const layer = new deck.IconLayer({
+          id: "location",
+          data: [{ longitude, latitude }],
+          pickable: true,
+          iconAtlas:
+            "https://img.icons8.com/emoji/48/000000/round-pushpin-emoji.png",
+          iconMapping: ICON_MAPPING,
+          getIcon: (d) => "marker",
+          sizeScale: 15,
+          getPosition: (d) => [d.longitude, d.latitude],
+          getSize: 10,
+          getColor: [255, 255, 255],
+        });
+        const keepLayers = deckgl.props.layers[0];
+
+        deckgl.setProps({
+          layers: [keepLayers, layer],
+        });
+
+        flyToClick([longitude, latitude]);
+      });
+    }
+  });
+
+  // append the button
+  document.body.appendChild(locationButton);
 
   const deckgl = new deck.DeckGL({
     container: "map",
@@ -131,7 +157,8 @@ JF.getFormSubmissions("223046917466057", function (response) {
           return d.coordinates;
         },
         // Styles
-        getRadius: 50,
+        radiusUnits: "pixels",
+        getRadius: 10,
         opacity: 0.7,
         stroked: false,
         filled: true,
@@ -140,6 +167,9 @@ JF.getFormSubmissions("223046917466057", function (response) {
         pickable: true,
         autoHighlight: true,
         highlightColor: [255, 255, 255, 255],
+        parameters: {
+          depthTest: false,
+        },
 
         onClick: (info) => {
           getImageGallery(info.object.images);
@@ -162,6 +192,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
       }
     },
   });
+
   function flyToClick(coords) {
     deckgl.setProps({
       initialViewState: {

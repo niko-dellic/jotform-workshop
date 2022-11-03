@@ -120,6 +120,21 @@ img {
     padding: 1rem;
 }
 
+#location-button {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    padding: 10px;
+    background: black;
+    color: white;
+    cursor: pointer;
+}
+
+#location-button:hover {
+    color: black;
+    background: white;
+}
+
 @media screen and (max-width: 1000px) {
 
     body {
@@ -177,6 +192,9 @@ img {
         margin: 0;
     }
 
+    #location-button {
+        font-size: 3rem;
+    }
 
     ::-webkit-scrollbar {
         display: none;
