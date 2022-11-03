@@ -103,7 +103,6 @@ img {
 
 .form-iframe {
     width: 100%;
-    height: auto;
     overflow: scroll;
     overflow-x: hidden;
 }
@@ -152,10 +151,10 @@ img {
         display: block;
     }
 
-    .grid-column {
-        grid-template-rows: auto;
-        grid-template-columns: none;
-        height: 100%;
+
+    .form-container {
+        height: auto;
+        overflow: hidden;
     }
 
     .grid-row-even {
