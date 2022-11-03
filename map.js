@@ -78,6 +78,9 @@ JF.getFormSubmissions("223046917466057", function (response) {
       getSize: (d) => 5,
       getColor: [255, 255, 255],
       pickable: true,
+      parameters: {
+        depthTest: false,
+      },
     });
 
     deckgl.setProps({
@@ -128,11 +131,11 @@ JF.getFormSubmissions("223046917466057", function (response) {
           return d.coordinates;
         },
         // Styles
+        getRadius: 50,
         opacity: 0.7,
         stroked: false,
         filled: true,
-        radiusScale: 30,
-        radiusMinPixels: 10,
+        radiusScale: 3,
         getFillColor: [255, 0, 0],
         pickable: true,
         autoHighlight: true,

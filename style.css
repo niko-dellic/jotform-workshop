@@ -23,7 +23,6 @@ body {
     margin: 0;
     padding: 0;
     font-family: "Franklin Gothic", "Arial Narrow", Arial, sans-serif;
-    overflow: hidden;
 }
 
 #map {
@@ -125,7 +124,6 @@ img {
 
     body {
         height: 100%;
-        overflow: auto;
         overflow-x: hidden;
     }
 
@@ -175,7 +173,8 @@ img {
     }
 
     #image-gallery img {
-        margin: 0rem;
+        width: 100%;
+        margin: 0;
     }
 
 
