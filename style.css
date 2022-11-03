@@ -57,7 +57,7 @@ img {
     width: 250px;
 }
 
-#popup {
+#image-gallery {
     position: absolute;
     top: 0;
     left: 0;
@@ -81,7 +81,7 @@ img {
 
 }
 
-#popup img {
+#image-gallery img {
     margin: 2rem;
     width: 500px;
 }

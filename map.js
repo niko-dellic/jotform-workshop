@@ -28,6 +28,31 @@ JF.getFormSubmissions("223046917466057", function (response) {
     responses.push(answerObject);
   }
 
+  function getImageGallery(images, preview = false) {
+    const imageGallery = document.createElement("div");
+    imageGallery.id = !preview ? "image-gallery" : "";
+
+    for (var i = 0; i < images.length; i++) {
+      const image = document.createElement("img");
+      image.src = images[i];
+
+      if (!preview || i === 0) {
+        imageGallery.appendChild(image);
+      }
+    }
+
+    // for closing the image gallery (only for click)
+    if (!preview) {
+      imageGallery.addEventListener("click", function () {
+        imageGallery.remove();
+      });
+      // append the image gallery to the body
+      document.body.appendChild(imageGallery);
+    } else {
+      return imageGallery.outerHTML;
+    }
+  }
+
   const deckgl = new deck.DeckGL({
     container: "map",
     // Set your Mapbox access token here
@@ -65,36 +90,17 @@ JF.getFormSubmissions("223046917466057", function (response) {
         autoHighlight: true,
         highlightColor: [255, 255, 255, 255],
         onClick: (info) => {
-          const div = document.createElement("div");
-
-          const imageElements = info.object.images.map((image) => {
-            const imageElement = document.createElement("img");
-            imageElement.src = image;
-            return imageElement;
-          });
-          div.id = "popup";
-          div.innerHTML = `${imageElements
-            .map((d) => {
-              return d.outerHTML;
-            })
-            .join(" ")}`;
-
-          // add event listener to close modal
-          div.addEventListener("click", () => {
-            div.remove();
-          });
-          document.body.appendChild(div);
-
+          getImageGallery(info.object.images);
           flyToClick(info.object.coordinates);
         },
       }),
     ],
     getTooltip: ({ object }) => {
       if (object) {
-        console.log(object);
+        // console.log(object.images);
         return (
           object && {
-            html: `<img  src=${object.images[0]} />`,
+            html: getImageGallery(object.images, (preview = true)),
             style: {
               width: "fit-content",
               backgroundColor: "transparent",
