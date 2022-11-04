@@ -1,8 +1,5 @@
 // api key to access JotForm
 JF.initialize({ apiKey: "336b42c904dd34391b7e1c055286588b" });
-var apiKey = JF.getAPIKey();
-
-console.log(apiKey);
 
 // get form submissions from JotForm Format: (formID, callback)
 JF.getFormSubmissions("223067547406053", function (response) {
