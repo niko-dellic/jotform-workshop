@@ -1,27 +1,93 @@
-document.addEventListener("contextmenu", (event) => event.preventDefault()); //disable right click for map
-
-const ICON_MAPPING = {
-  marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
-};
-
+// api key to access JotForm
 JF.initialize({ apiKey: "336b42c904dd34391b7e1c055286588b" });
 var apiKey = JF.getAPIKey();
 
-JF.getFormSubmissions("223046917466057", function (response) {
-  const responses = [];
+// get form submissions from JotForm Format: (formID, callback)
+JF.getFormSubmissions("223067547406053", function (response) {
+  // array to store all the submissions: we will use this to create the map
+  const submissions = [];
+  // for each response
   for (var i = 0; i < response.length; i++) {
-    const answerObject = {};
+    // create an object to store the submissions and structure as a json
+    const submissionProps = {};
 
-    const stringCoords = response[i].answers[3].answer;
-    const coordinates = stringCoords
-      .split(",")
-      .map((X) => parseFloat(X))
-      .reverse();
+    // add all fields of response.answers to our object
+    const keys = Object.keys(response[i].answers);
+    keys.forEach((answer) => {
+      const lookup = response[i].answers[answer].cfname ? "cfname" : "name";
+      submissionProps[response[i].answers[answer][lookup]] =
+        response[i].answers[answer].answer;
+    });
 
-    answerObject["coordinates"] = coordinates;
-    answerObject["images"] = response[i].answers[4].answer;
-    responses.push(answerObject);
+    // convert location coordinates string to float array
+    submissionProps["Location Coordinates"] = submissionProps[
+      "Location Coordinates"
+    ]
+      .split(/\r?\n/)
+      .map((X) => parseFloat(X.replace(/[^\d.-]/g, "")));
+
+    // add submission to submissions array
+    submissions.push(submissionProps);
   }
+
+  const deckgl = new deck.DeckGL({
+    container: "map",
+    // Set your Mapbox access token here
+    mapboxApiAccessToken:
+      "pk.eyJ1Ijoibmlrby1kZWxsaWMiLCJhIjoiY2w5c3p5bGx1MDh2eTNvcnVhdG0wYWxkMCJ9.4uQZqVYvQ51iZ64yG8oong",
+    // Set your Mapbox style here
+    mapStyle: "mapbox://styles/niko-dellic/cl9t226as000x14pr1hgle9az",
+    initialViewState: {
+      latitude: 42.36476,
+      longitude: -71.10326,
+      zoom: 12,
+      bearing: 0,
+      pitch: 0,
+    },
+    touchRotate: true,
+    controller: true,
+    layers: [
+      new deck.ScatterplotLayer({
+        id: "form-submissions", // layer id
+        data: submissions, // data formatted as array of objects
+        getPosition: (d) => {
+          return d["Location Coordinates"];
+        },
+        // Styles
+        radiusUnits: "pixels",
+        getRadius: 10,
+        opacity: 0.7,
+        stroked: false,
+        filled: true,
+        radiusScale: 3,
+        getFillColor: [255, 0, 0],
+        pickable: true,
+        autoHighlight: true,
+        highlightColor: [255, 255, 255, 255],
+        parameters: {
+          depthTest: false,
+        },
+        onClick: (info) => {
+          getImageGallery(info.object.fileUpload);
+          flyToClick(info.object["Location Coordinates"]);
+        },
+      }),
+    ],
+    getTooltip: ({ object }) => {
+      if (object) {
+        return (
+          object && {
+            html: getImageGallery(object.fileUpload, (preview = true)),
+            style: {
+              width: "fit-content",
+              backgroundColor: "transparent",
+              overflow: "hidden",
+            },
+          }
+        );
+      }
+    },
+  });
 
   function getImageGallery(images, preview = false) {
     if (!images && preview) {
@@ -53,6 +119,20 @@ JF.getFormSubmissions("223046917466057", function (response) {
     }
   }
 
+  function flyToClick(coords) {
+    deckgl.setProps({
+      initialViewState: {
+        longitude: coords[0],
+        latitude: coords[1],
+        zoom: 17,
+        bearing: 20,
+        pitch: 20,
+        transitionDuration: 750,
+        transitionInterpolator: new deck.FlyToInterpolator(),
+      },
+    });
+  }
+
   // get current location
   const successCallback = (position) => {
     // add new point layer of current location to deck gl
@@ -65,7 +145,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
       ],
       pickable: true,
       iconAtlas:
-        "https://img.icons8.com/emoji/48/000000/round-pushpin-emoji.png",
+        "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
       iconMapping: ICON_MAPPING,
       getIcon: (d) => "marker",
       sizeScale: 15,
@@ -95,9 +175,12 @@ JF.getFormSubmissions("223046917466057", function (response) {
     getCurrentLocation();
   }
 
-  const locationButton = document.createElement("button");
+  const ICON_MAPPING = {
+    marker: { x: 0, y: 0, width: 128, height: 128, mask: true },
+  };
+  const locationButton = document.createElement("div");
   // create a button that will request the users location
-  locationButton.textContent = "Show my location";
+  locationButton.textContent = "Where am I?";
   locationButton.id = "location-button";
   locationButton.addEventListener("click", () => {
     // when clicked, get the users location
@@ -110,7 +193,7 @@ JF.getFormSubmissions("223046917466057", function (response) {
           data: [{ longitude, latitude }],
           pickable: true,
           iconAtlas:
-            "https://img.icons8.com/emoji/48/000000/round-pushpin-emoji.png",
+            "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png",
           iconMapping: ICON_MAPPING,
           getIcon: (d) => "marker",
           sizeScale: 15,
@@ -128,82 +211,6 @@ JF.getFormSubmissions("223046917466057", function (response) {
       });
     }
   });
-
   // append the button
   document.body.appendChild(locationButton);
-
-  const deckgl = new deck.DeckGL({
-    container: "map",
-    // Set your Mapbox access token here
-    mapboxApiAccessToken:
-      "pk.eyJ1Ijoibmlrby1kZWxsaWMiLCJhIjoiY2w5c3p5bGx1MDh2eTNvcnVhdG0wYWxkMCJ9.4uQZqVYvQ51iZ64yG8oong",
-    // Set your Mapbox style here
-    mapStyle: "mapbox://styles/niko-dellic/cl9t226as000x14pr1hgle9az",
-    initialViewState: {
-      latitude: 42.36476,
-      longitude: -71.10326,
-      zoom: 12,
-      bearing: 0,
-      pitch: 0,
-    },
-    touchRotate: true,
-    controller: true,
-
-    layers: [
-      new deck.ScatterplotLayer({
-        id: "form-submissions", // layer id
-        data: responses, // data formatted as array of objects
-        getPosition: (d) => {
-          return d.coordinates;
-        },
-        // Styles
-        radiusUnits: "pixels",
-        getRadius: 10,
-        opacity: 0.7,
-        stroked: false,
-        filled: true,
-        radiusScale: 3,
-        getFillColor: [255, 0, 0],
-        pickable: true,
-        autoHighlight: true,
-        highlightColor: [255, 255, 255, 255],
-        parameters: {
-          depthTest: false,
-        },
-
-        onClick: (info) => {
-          getImageGallery(info.object.images);
-          flyToClick(info.object.coordinates);
-        },
-      }),
-    ],
-    getTooltip: ({ object }) => {
-      if (object) {
-        return (
-          object && {
-            html: getImageGallery(object.images, (preview = true)),
-            style: {
-              width: "fit-content",
-              backgroundColor: "transparent",
-              overflow: "hidden",
-            },
-          }
-        );
-      }
-    },
-  });
-
-  function flyToClick(coords) {
-    deckgl.setProps({
-      initialViewState: {
-        longitude: coords[0],
-        latitude: coords[1],
-        zoom: 17,
-        bearing: 20,
-        pitch: 20,
-        transitionDuration: 750,
-        transitionInterpolator: new deck.FlyToInterpolator(),
-      },
-    });
-  }
 });
