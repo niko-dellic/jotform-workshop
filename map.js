@@ -1,21 +1,23 @@
+document.addEventListener("contextmenu", (event) => event.preventDefault()); //disable right click for map
+
 // api key to access JotForm
 JF.initialize({ apiKey: "336b42c904dd34391b7e1c055286588b" });
 
 // get form submissions from JotForm Format: (formID, callback)
-JF.getFormSubmissions("223067547406053", function (response) {
+JF.getFormSubmissions("223067547406053", function (responses) {
   // array to store all the submissions: we will use this to create the map
   const submissions = [];
-  // for each response
-  for (var i = 0; i < response.length; i++) {
+  // for each responses
+  for (var i = 0; i < responses.length; i++) {
     // create an object to store the submissions and structure as a json
     const submissionProps = {};
 
-    // add all fields of response.answers to our object
-    const keys = Object.keys(response[i].answers);
+    // add all fields of responses.answers to our object
+    const keys = Object.keys(responses[i].answers);
     keys.forEach((answer) => {
-      const lookup = response[i].answers[answer].cfname ? "cfname" : "name";
-      submissionProps[response[i].answers[answer][lookup]] =
-        response[i].answers[answer].answer;
+      const lookup = responses[i].answers[answer].cfname ? "cfname" : "name";
+      submissionProps[responses[i].answers[answer][lookup]] =
+        responses[i].answers[answer].answer;
     });
 
     // convert location coordinates string to float array
@@ -67,7 +69,11 @@ JF.getFormSubmissions("223067547406053", function (response) {
           depthTest: false,
         },
         onClick: (info) => {
-          getImageGallery(info.object.fileUpload);
+          getImageGallery(
+            info.object.fileUpload,
+            info.object.describeWhat,
+            (preview = false)
+          );
           flyToClick(info.object["Location Coordinates"]);
         },
       }),
@@ -76,7 +82,11 @@ JF.getFormSubmissions("223067547406053", function (response) {
       if (object) {
         return (
           object && {
-            html: getImageGallery(object.fileUpload, (preview = true)),
+            html: getImageGallery(
+              object.fileUpload,
+              object.describeWhat,
+              (preview = true)
+            ),
             style: {
               width: "fit-content",
               backgroundColor: "transparent",
@@ -88,7 +98,7 @@ JF.getFormSubmissions("223067547406053", function (response) {
     },
   });
 
-  function getImageGallery(images, preview = false) {
+  function getImageGallery(images, text, preview = false) {
     if (!images && preview) {
       // return you are here text
       return `<p id="current-location-text">You are here</p>`;
@@ -101,10 +111,29 @@ JF.getFormSubmissions("223067547406053", function (response) {
       const image = document.createElement("img");
       image.src = images[i];
 
+      // set max width to image
+      image.style.maxWidth = preview ? "350px" : "";
+
       if (!preview || i === 0) {
         imageGallery.appendChild(image);
       }
     }
+
+    // add text to image gallery
+    const textDiv = document.createElement("div");
+    textDiv.id = "image-gallery-text";
+    textDiv.innerHTML = text;
+
+    // add fixed styling if in modal view
+    if (!preview) {
+      textDiv.style.position = "fixed";
+      textDiv.style.top = "0";
+      textDiv.style.left = "0";
+      textDiv.style.right = "0";
+      textDiv.style.borderRadius = "0";
+      textDiv.style.padding = "2rem";
+    }
+    imageGallery.appendChild(textDiv);
 
     // for closing the image gallery (only for click)
     if (!preview) {

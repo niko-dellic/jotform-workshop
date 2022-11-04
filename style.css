@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    overflow-x: hidden;
+    overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -34,11 +34,19 @@ body {
     overflow: auto;
 }
 
+#image-gallery-text,
 #current-location-text {
     color: white;
     background-color: black;
     padding: 1rem;
 }
+
+#image-gallery-text {
+    /* add border radius to only bottom corners */
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
 
 #location-button {
     position: absolute;
@@ -59,6 +67,10 @@ body {
 
 
 @media screen and (max-width: 1000px) {
+
+    body {
+        overflow-y: auto;
+    }
 
     #map {
         width: 100%;

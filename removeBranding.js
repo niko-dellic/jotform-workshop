@@ -8,7 +8,6 @@ window.onload = function () {
       const footers =
         iframe[i].contentWindow.document.getElementsByClassName("branding21");
       for (let j = 0; j < footers.length; j++) {
-        console.log(footers[j].style);
         footers[j].remove();
       }
     }
