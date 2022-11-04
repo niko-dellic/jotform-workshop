@@ -2,6 +2,8 @@
 JF.initialize({ apiKey: "336b42c904dd34391b7e1c055286588b" });
 var apiKey = JF.getAPIKey();
 
+console.log(apiKey);
+
 // get form submissions from JotForm Format: (formID, callback)
 JF.getFormSubmissions("223067547406053", function (response) {
   // array to store all the submissions: we will use this to create the map
@@ -187,6 +189,12 @@ JF.getFormSubmissions("223067547406053", function (response) {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
+
+        locationButton.textContent =
+          "Where am I? " +
+          position.coords.latitude +
+          ", " +
+          position.coords.longitude;
         // create a deck gl layer for the users location
         const layer = new deck.IconLayer({
           id: "location",
