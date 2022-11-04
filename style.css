@@ -58,7 +58,7 @@ body {
 
 
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 1000px) {
 
     #map {
         width: 100%;
@@ -72,5 +72,12 @@ body {
 
     #image-gallery img {
         width: 100%;
+    }
+
+
+    #location-button,
+    #current-location-text {
+        font-size: 3rem;
+        padding: 2rem;
     }
 }
