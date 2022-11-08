@@ -34,10 +34,10 @@ JF.getFormSubmissions("223067547406053", function (responses) {
   const deckgl = new deck.DeckGL({
     container: "map",
     // Set your Mapbox access token here
-    mapboxApiAccessToken:
-      "pk.eyJ1Ijoibmlrby1kZWxsaWMiLCJhIjoiY2w5c3p5bGx1MDh2eTNvcnVhdG0wYWxkMCJ9.4uQZqVYvQ51iZ64yG8oong",
+    // mapboxApiAccessToken:
+    //   "pk.eyJ1Ijoibmlrby1kZWxsaWMiLCJhIjoiY2w5c3p5bGx1MDh2eTNvcnVhdG0wYWxkMCJ9.4uQZqVYvQ51iZ64yG8oong",
     // Set your Mapbox style here
-    mapStyle: "mapbox://styles/niko-dellic/cl9t226as000x14pr1hgle9az",
+    // mapStyle: "mapbox://styles/niko-dellic/cl9t226as000x14pr1hgle9az",
     initialViewState: {
       latitude: 42.36476,
       longitude: -71.10326,
