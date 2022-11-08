@@ -218,9 +218,9 @@ JF.getFormSubmissions("223067547406053", function (responses) {
 
         locationButton.textContent =
           "Where am I? " +
-          position.coords.latitude +
+          position.coords.latitude.toFixed(3) +
           ", " +
-          position.coords.longitude;
+          position.coords.longitude.toFixed(3);
         // create a deck gl layer for the users location
         const layer = new deck.IconLayer({
           id: "location",
@@ -245,6 +245,14 @@ JF.getFormSubmissions("223067547406053", function (responses) {
       });
     }
   });
+
+  // add a button to take you to the next page
+  const nextButton = document.createElement("a");
+  nextButton.textContent = "Submit a request";
+  nextButton.id = "next-button";
+  nextButton.href = "./form.html";
+
   // append the button
   document.body.appendChild(locationButton);
+  document.body.appendChild(nextButton);
 });
