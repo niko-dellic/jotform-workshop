@@ -82,18 +82,23 @@ JF.getFormSubmissions("223067547406053", function (responses) {
       if (object) {
         return (
           object && {
-            html: getImageGallery(
-              object.fileUpload,
-              object.describeWhat,
-              (preview = true)
-            ),
-            style: {
-              width: "fit-content",
-              backgroundColor: "transparent",
-              overflow: "hidden",
-            },
+            html: `<div>YO what is up!</div>`,
           }
         );
+        // return (
+        //   object && {
+        //     html: getImageGallery(
+        //       object.fileUpload,
+        //       object.describeWhat,
+        //       (preview = true)
+        //     ),
+        //     style: {
+        //       width: "fit-content",
+        //       backgroundColor: "transparent",
+        //       overflow: "hidden",
+        //     },
+        //   }
+        // );
       }
     },
   });
